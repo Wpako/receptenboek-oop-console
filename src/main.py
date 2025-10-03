@@ -84,7 +84,7 @@ def kies_recept_index(boek: Receptenboek) -> int:
                 return idx
         print("Ongeldige invoer. Probeer opnieuw.")
 
-# ------------------- Acties (FR-6..8) -------------------
+# ------------------- Acties (FR-6..8 + FR-2..5 gedrag) -------------------
 def actie_tonen(boek: Receptenboek) -> None:
     idx = kies_recept_index(boek)
     if idx == -1:
@@ -95,8 +95,24 @@ def actie_tonen(boek: Receptenboek) -> None:
     if not recept:
         print("Recept niet gevonden.")
         return
+
     recept.set_aantal_personen(personen)
     print("\n" + recept.as_text(plantaardig))
+
+    # === conform acceptatie-eis: na tonen kunnen verwijderen of terug ===
+    while True:
+        keuze = input("\nWil je dit recept verwijderen (v) of terug naar menu (m)? ").strip().lower()
+        if keuze == "v":
+            if vraag_ja_nee(f"Weet je zeker dat je '{recept.get_naam()}' wilt verwijderen?"):
+                if boek.verwijder_index(idx):
+                    print("Recept verwijderd.")
+                else:
+                    print("Verwijderen mislukt.")
+            break
+        elif keuze == "m":
+            break
+        else:
+            print("Ongeldige invoer. Kies 'v' of 'm'.")
 
 def actie_toevoegen(boek: Receptenboek) -> None:
     print("\n--- Nieuw recept toevoegen ---")
@@ -110,36 +126,39 @@ def actie_toevoegen(boek: Receptenboek) -> None:
     # Ingrediënten (voor 1 persoon)
     print("\nIngrediënten toevoegen (voor 1 persoon).")
     while True:
-        ing_naam = input("Ingrediëntnaam (of leeg om te stoppen): ").strip()
+        ing_naam = input("Ingrediëntnaam (of druk Enter om te stoppen): ").strip()
         if ing_naam == "":
             if len(nieuw._ingredient_list) == 0:
                 print("Minstens één ingrediënt is vereist.")
                 continue
             break
-        hoeveelheid = vraag_float("Hoeveelheid (bijv. 100): ", 0.0)
-        eenheid = input("Eenheid (bijv. g, ml, stuk): ").strip() or "g"
-        kcal = vraag_float("kcal bij deze hoeveelheid: ", 0.0)
+        hoeveelheid = vraag_float("  Hoeveelheid (bijv. 100): ", 0.0)
+        eenheid = input("  Eenheid (bijv. g, ml, stuk): ").strip() or "g"
+        kcal = vraag_float("  kcal bij deze hoeveelheid: ", 0.0)
 
         alt = None
-        if vraag_ja_nee("Bestaat er een plantaardig alternatief?"):
-            alt_naam = input("  Alternatief naam: ").strip()
-            alt_hoeveelheid = vraag_float("  Alternatief hoeveelheid: ", 0.0)
-            alt_eenheid = input("  Alternatief eenheid: ").strip() or eenheid
-            alt_kcal = vraag_float("  Alternatief kcal: ", 0.0)
+        if vraag_ja_nee("  Bestaat er een plantaardig alternatief?"):
+            alt_naam = input("    Alternatief naam: ").strip()
+            alt_hoeveelheid = vraag_float("    Alternatief hoeveelheid: ", 0.0)
+            alt_eenheid = input("    Alternatief eenheid: ").strip() or eenheid
+            alt_kcal = vraag_float("    Alternatief kcal: ", 0.0)
             alt = Ingredient(alt_naam, alt_hoeveelheid, alt_eenheid, alt_kcal)
 
         nieuw.voeg_ingredient_toe(Ingredient(ing_naam, hoeveelheid, eenheid, kcal, alt))
 
-    # Stappen
+    # Stappen + duidelijke tip-prompts
     print("\nBereidingsstappen toevoegen (minimaal 1).")
+    print("Na elke stap krijg je de optie om een tip te geven.")
+    print("Laat de tip leeg als je geen tip wilt toevoegen.\n")
+
     while True:
-        stap_beschrijving = input("Stap (beschrijving, of leeg om te stoppen): ").strip()
+        stap_beschrijving = input("Voer een stap in (of druk Enter om te stoppen): ").strip()
         if stap_beschrijving == "":
             if len(nieuw._stappen_list) == 0:
-                print("Minstens één stap is vereist.")
+                print("Minstens één stap is verplicht. Voeg ten minste één stap toe.")
                 continue
             break
-        tip = input("  Tip (optioneel, leeg laten voor geen): ").strip() or None
+        tip = input("  Optionele tip voor deze stap (druk Enter voor geen tip): ").strip() or None
         nieuw.voeg_stap_toe(Stap(stap_beschrijving, tip))
 
     boek.toevoegen(nieuw)
