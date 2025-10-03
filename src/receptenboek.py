@@ -15,3 +15,13 @@ class Receptenboek:
         if 0 <= index < len(self._recepten):
             return self._recepten[index]
         return None
+
+    def verwijder_index(self, index: int) -> bool:
+        """Verwijder recept op index; True bij succes, anders False."""
+        if 0 <= index < len(self._recepten):
+            del self._recepten[index]
+            return True
+        return False
+
+    def aantal(self) -> int:
+        return len(self._recepten)
