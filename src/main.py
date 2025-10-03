@@ -3,9 +3,9 @@ from recept import Recept
 from ingredient import Ingredient
 from stap import Stap
 
-# ------------------- Seed (zoals Week 2) -------------------
+# ------------------- Seed-data (met kcal & alternatieven) -------------------
 def seed_data(boek: Receptenboek) -> None:
-    # Recept 1 — Pasta Pesto (kcal zijn schattingen per 1 pers)
+    # Recept 1 — Pasta Pesto
     r1 = Recept("Pasta Pesto", "Snelle pasta met basilicumpesto en cherrytomaat.")
     pesto_alt = Ingredient("vegan pesto", 30, "g", 130)
     r1.voeg_ingredient_toe(Ingredient("pasta", 100, "g", 360))
@@ -38,7 +38,7 @@ def seed_data(boek: Receptenboek) -> None:
     r3.voeg_stap_toe(Stap("Vul met spinazie en kaas; bak 30 min op 180°C.", tip="Prik in het midden om te checken of hij gaar is."))
     boek.toevoegen(r3)
 
-# ------------------- Helpers voor invoer -------------------
+# ------------------- Helpers -------------------
 def vraag_int(vraag: str, min_value: int = 1) -> int:
     while True:
         val = input(vraag).strip()
@@ -84,10 +84,10 @@ def kies_recept_index(boek: Receptenboek) -> int:
                 return idx
         print("Ongeldige invoer. Probeer opnieuw.")
 
-# ------------------- Acties Week 3 -------------------
+# ------------------- Acties (FR-6..8) -------------------
 def actie_tonen(boek: Receptenboek) -> None:
     idx = kies_recept_index(boek)
-    if idx == -1: 
+    if idx == -1:
         return
     personen = vraag_int("\nVoor hoeveel personen wil je dit recept? ")
     plantaardig = vraag_ja_nee("Wil je een plantaardige variant gebruiken waar mogelijk?")
@@ -107,7 +107,7 @@ def actie_toevoegen(boek: Receptenboek) -> None:
     omschrijving = input("Korte omschrijving: ").strip()
     nieuw = Recept(naam, omschrijving)
 
-    # Ingrediënten
+    # Ingrediënten (voor 1 persoon)
     print("\nIngrediënten toevoegen (voor 1 persoon).")
     while True:
         ing_naam = input("Ingrediëntnaam (of leeg om te stoppen): ").strip()
@@ -120,7 +120,6 @@ def actie_toevoegen(boek: Receptenboek) -> None:
         eenheid = input("Eenheid (bijv. g, ml, stuk): ").strip() or "g"
         kcal = vraag_float("kcal bij deze hoeveelheid: ", 0.0)
 
-        # Plantaardig alternatief?
         alt = None
         if vraag_ja_nee("Bestaat er een plantaardig alternatief?"):
             alt_naam = input("  Alternatief naam: ").strip()
@@ -170,8 +169,7 @@ def hoofdmenu() -> str:
     print("[2] Recept toevoegen")
     print("[3] Recept verwijderen")
     print("[4] Afsluiten")
-    keuze = input("Maak een keuze: ").strip()
-    return keuze
+    return input("Maak een keuze: ").strip()
 
 def main() -> None:
     boek = Receptenboek()

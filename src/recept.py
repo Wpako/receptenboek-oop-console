@@ -10,28 +10,21 @@ class Recept:
         self._ingredient_list: List[Ingredient] = []
         self._stappen_list: List[Stap] = []
 
-    # ---- mutators ----
     def voeg_ingredient_toe(self, ingredient: Ingredient) -> None:
         self._ingredient_list.append(ingredient)
 
     def voeg_stap_toe(self, stap: Stap) -> None:
         self._stappen_list.append(stap)
 
-    # ---- Week 2 logica ----
     def set_aantal_personen(self, n: int) -> None:
-        """Schaal alle ingredienten van basis (1 persoon) naar n."""
         factor = n / self._aantal_personen
         for ing in self._ingredient_list:
             ing.set_hoeveelheid(factor)
         self._aantal_personen = n
 
     def totale_kcal(self, plantaardig: bool) -> int:
-        totaal = 0.0
-        for ing in self._ingredient_list:
-            totaal += ing.get_ingredient(plantaardig).get_kcal()
-        return int(round(totaal))
+        return int(round(sum(ing.get_ingredient(plantaardig).get_kcal() for ing in self._ingredient_list)))
 
-    # ---- presentatielaag (console) ----
     def as_text(self, plantaardig: bool) -> str:
         lines = [
             f"{self._naam}",

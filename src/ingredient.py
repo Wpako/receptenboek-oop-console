@@ -3,7 +3,7 @@ from typing import Optional
 
 class Ingredient:
     """
-    kcal sla je op behorend bij de opgegeven hoeveelheid/eenheid.
+    kcal hoort bij de opgegeven hoeveelheid/eenheid (voor 1 pers).
     Bij schalen vermenigvuldigen we hoeveelheid én kcal evenredig.
     """
     def __init__(
@@ -20,19 +20,15 @@ class Ingredient:
         self._kcal = float(kcal)
         self._plantaardig_alternatief = plantaardig_alternatief
 
-    # ---------- Week 2 logica ----------
     def set_hoeveelheid(self, factor: float) -> None:
-        """Schaal hoeveelheid en kcal met factor (bijv. aantal personen)."""
         self._hoeveelheid *= factor
         self._kcal *= factor
         if self._plantaardig_alternatief:
             self._plantaardig_alternatief.set_hoeveelheid(factor)
 
     def get_ingredient(self, plantaardig: bool) -> "Ingredient":
-        """Geef alternatief terug als plantaardig True en alternatief bestaat."""
         return self._plantaardig_alternatief if (plantaardig and self._plantaardig_alternatief) else self
 
-    # ---------- helpers ----------
     def get_kcal(self) -> float:
         return self._kcal
 
